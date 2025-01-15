@@ -1,10 +1,24 @@
-import { Link } from 'react-router-dom';
-import { useMovieContext } from '../src/context/MovieContext';
+import { useEffect, useState } from 'react';
 import MovieCard from './MovieCard';
 
 function MovieList() {
-    const { movies, loading, error } = useMovieContext();
-  
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("https://www.omdbapi.com/?apikey=957fac8e&s=batman")
+    .then((res)=> res.json())
+    .then((data)=> {
+      setMovies(data.Search)
+      console.log(data.Search)
+      setLoading(false)
+    })
+    .then((err)=> {
+      console.log(err)
+    })
+  }, []);
+
+
     if (loading) {
       return (
         <div className="flex justify-center items-center h-64">
@@ -13,19 +27,12 @@ function MovieList() {
       );
     }
   
-    if (error) {
-      return (
-        <div className="text-center text-red-600 p-4">
-          {error}
-        </div>
-      );
-    }
   
     return (
       <div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {movies.map(movie => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard key={movie.imdbID} movie={movie} />
           ))}
         </div>
       </div>
